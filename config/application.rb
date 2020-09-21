@@ -1,6 +1,6 @@
 require_relative 'boot'
-
 require 'rails/all'
+require 'rack/cors'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -15,5 +15,18 @@ module Testrails
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    # CORS: https://medium.com/@admatbandara/setting-up-cors-to-my-rails-api-a6184e461a0f
+    #config.middleware.insert_before 0, "Rack::Cors" do
+    config.middleware.insert_before ActionDispatch::Static, Rack::Cors do
+      allow do
+        origins '*'
+        resource(
+          '*',
+          headers: :any,
+          methods: [:get, :patch, :put, :delete, :post, :options]
+          )
+      end
+    end
   end
 end
