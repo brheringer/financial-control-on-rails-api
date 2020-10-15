@@ -18,7 +18,6 @@ RSpec.describe Types::QueryType do
     end
 
     it "returns all centers" do
-      #puts result #uncomment to inspect object in prompt
       expect(result.dig("data", "resultCenters")).to match_array(
         result_centers.map { |cr| { "name" => cr.name } }
       )
@@ -70,7 +69,6 @@ RSpec.describe Types::QueryType do
     end
 
     it "returns all entries" do
-      #puts result #uncomment to inspect object in prompt
       expect(result.dig("data", "entries")).to match_array(
         entries.map { |e| { 
           "date" => e.date, 
@@ -79,6 +77,56 @@ RSpec.describe Types::QueryType do
           }
         }
       )
+    end
+  end
+
+  describe "search entries by date" do
+    let!(:entry_in_september) { create(:entry, :in_september) }
+    let!(:entry_in_october) { create(:entry, :in_october) }
+
+    let(:query) do
+      %(query($start: ISO8601Date, $end: ISO8601Date) {
+        entries(start: $start, end: $end) {
+          date
+          value
+          memo
+        }
+      })
+    end
+
+    subject(:result) do #significa: o subject (objeto do teste) vai ser o resultado da query (json); sem isso, seria QueryType.new
+        TestrailsSchema.execute(query, variables: {start: '2020-09-01', end: '2020-09-30'}).as_json
+    end
+
+    it "should find one entry in september" do
+      expect(result["data"]["entries"].length).to eq 1
+      expect(result["data"]["entries"][0]["date"]).to eq '2020-09-01T03:00:00Z' #TODO how to test independent of timezone
+      expect(result["data"]["entries"][0]["value"]).to eq 100.00
+      expect(result["data"]["entries"][0]["memo"]).to eq 'this is a memo'
+    end
+  end
+
+  describe "entry" do
+    let!(:entry) { create(:entry) }
+
+    let(:query) do
+      %(query($id: ID!) {
+        entry(id: $id) {
+          id
+          date
+          value
+          memo
+        }
+      })
+    end
+
+    subject(:result) do #significa: o subject (objeto do teste) vai ser o resultado da query (json); sem isso, seria QueryType.new
+        TestrailsSchema.execute(query, variables: {id: entry.id}).as_json
+    end
+
+    it "finds one entry with specifid id" do
+      expect(result["data"]["entry"]["id"]).to eq "1"
+      #TODO
     end
   end
 

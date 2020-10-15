@@ -15,5 +15,13 @@ FactoryBot.define do
         memo { 'this is a memo' }
         account
         result_center
+
+        trait :in_september do
+            date { Time.new(2020, 9, 1) }
+        end
+
+        trait :in_october do
+            date { Time.new(2020, 10, 1) }
+        end
     end
 end

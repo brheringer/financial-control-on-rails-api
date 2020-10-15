@@ -97,4 +97,16 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  #https://stackoverflow.com/questions/41911906/how-to-clean-database-before-running-the-each-spec-file
+  config.before(:each) do
+    DatabaseCleaner.start
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with :truncation
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
 end
