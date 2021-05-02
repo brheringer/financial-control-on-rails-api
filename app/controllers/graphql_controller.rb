@@ -5,7 +5,7 @@ class GraphqlController < ApplicationController
   # protect_from_forgery with: :null_session
 
   #https://stackoverflow.com/questions/34251400/invalid-authenticity-token-on-post
-  skip_before_action :verify_authenticity_token
+  #skip_before_action :verify_authenticity_token
 
   def execute
     variables = ensure_hash(params[:variables])

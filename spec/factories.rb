@@ -1,4 +1,10 @@
 FactoryBot.define do
+  factory :user do
+    username { "MyString" }
+    password_digest { "MyString" }
+    age { 1 }
+  end
+
     factory :account do
         # Use sequence to make sure that the value is unique
         sequence(:structure) { |n| "account-#{n}" }
